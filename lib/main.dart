@@ -1,6 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:gifticonapp/gifticonInfo.dart';
+import 'dart:io';
+
 
 void main() {
   runApp(const MyApp());
@@ -16,14 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
-      routes: {
-        '/':(context)=>const MyHomePage(title: 'Gifticon App'),
-        '/register':(context)=>RegisterPage(),
-        '/gifticon':(context)=>GifticonPage(),
-
-      },
-      //home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -38,15 +31,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   int _rowCount=3;
   String _orderStd='전체';
   List<String> orderStdArr=['전체','기간 임박순','기간 많은 순','이름','미사용','사용완료'];
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,17 +94,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: GridView.count(crossAxisCount: _rowCount, shrinkWrap: true,
                   childAspectRatio: (itemWidth / itemHeight),
                   scrollDirection: Axis.vertical,
-                children: [
-                  Gifticon(remainDate: '3',),
-                  Gifticon(remainDate: '4',),
-                  Gifticon(remainDate: '27',),
-                  Gifticon(remainDate: '30',),
-                  Gifticon(remainDate: '100',),
-                  Gifticon(remainDate: '3123',),
-                  Gifticon(remainDate: '32',),
-                  Gifticon(remainDate: '28',),
-                  Gifticon(remainDate: '1',),
-                ],),
+                  children: [
+                    Gifticon(remainDate: '3',),
+                    Gifticon(remainDate: '4',),
+                    Gifticon(remainDate: '27',),
+                    Gifticon(remainDate: '30',),
+                    Gifticon(remainDate: '100',),
+                    Gifticon(remainDate: '3123',),
+                    Gifticon(remainDate: '32',),
+                    Gifticon(remainDate: '28',),
+                    Gifticon(remainDate: '1',),
+                  ],),
               ),
             )
           ],
@@ -124,7 +112,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          Navigator.pushNamed(context, '/register');
+          showDialog(context: context, builder: (context)=>AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
+              content:
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  imageShow(),
+                  SizedBox(height: 30),
+                  Text("chicken"),
+                  SizedBox(height: 30),
+                  Text("2022/11/07")
+                ],
+              )
+          )
+          );
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add,size:40),
@@ -140,9 +142,10 @@ class Gifticon extends StatelessWidget {
   final String remainDate;
   Gifticon({this.remainDate='0'});
 
+
   @override
   Widget build(BuildContext context) {
-    
+
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.all(3),
@@ -185,50 +188,113 @@ class Gifticon extends StatelessWidget {
                         Text("name",style:TextStyle(color:Colors.white)),
                       ],
                     ),
+                  ),
                 ),
-              ),
               ),
             ],
           ),
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo("id", "name", "img", DateTime(2022,10,7),3 ));
+        showDialog(context: context, builder: (context)=>AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), title: Text("ShowImage"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('imgs/flutter_image.png', width: 60, height:120),
+              SizedBox(height:20),
+              Text("이름"),
+              SizedBox(height:20),
+              Text("유효기한"),
+              SizedBox(height:20),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children:[ElevatedButton(onPressed: (){}, child: Text("사용완료")),
+                SizedBox(width:10),
+                ElevatedButton(onPressed: (){}, child: Text("수정")), SizedBox(width: 10),
+                ElevatedButton(onPressed: (){
+
+                }, child: Text("삭제"),)],),
+            ],
+          ),
+        ),
+        );
       },
     );
   }
+
 }
 
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+class imageShow extends StatefulWidget {
+  const imageShow({Key? key}) : super(key: key);
 
   @override
+  State<imageShow> createState() => _imageShowState();
+}
+
+class _imageShowState extends State<imageShow> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Register Page"),
-        ),
-        body:Center(
-          child:Text("Register Page")
+    return Center(
+        child: Stack(
+          children: [
+            InkWell(
+              child: CircleAvatar(
+                radius: 80,
+                backgroundColor: Colors.white54,
+              ),
+              onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
+            )
+          ],
         )
     );
   }
 }
 
-class GifticonPage extends StatelessWidget {
-  const GifticonPage({Key? key}) : super(key: key);
+class bottomSheet extends StatefulWidget {
+  const bottomSheet({Key? key}) : super(key: key);
+
+  @override
+  State<bottomSheet> createState() => _bottomSheetState();
+}
+
+class _bottomSheetState extends State<bottomSheet> {
   @override
   Widget build(BuildContext context) {
-    final info=ModalRoute.of(context)?.settings.arguments as GifticonInfo;
-    return Scaffold(
-      appBar: AppBar(
-        title:Text("Gifticon Page"),
+    return Container(
+      height: 115,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
       ),
-      body: Center(
-        child:Text(info.id)
+      child: Column(
+        children: [
+          Text('Choose Photo', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton.icon(
+                  icon: Icon(Icons.camera, size: 50),
+                  onPressed: (){
+
+                  },
+                  label: Text('Camera', style: TextStyle(fontSize: 20))
+              ),
+              TextButton.icon(
+                  icon: Icon(Icons.photo_library, size: 50),
+                  onPressed: (){
+
+                  },
+                  label: Text('Gallery', style: TextStyle(fontSize: 20))
+              )
+            ],
+          )
+
+        ],
       ),
     );
   }
+
 }
 
 
