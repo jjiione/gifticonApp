@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 
 void main() {
@@ -25,7 +26,6 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -35,11 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
   String _orderStd='전체';
   List<String> orderStdArr=['전체','기간 임박순','기간 많은 순','이름','미사용','사용완료'];
 
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
     /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
@@ -122,13 +120,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(height: 30),
                   Text("chicken"),
                   SizedBox(height: 30),
-                  Text("2022/11/07")
+                  Text("2022/11/07"),
+                  ElevatedButton(onPressed: (){
+
+                    Navigator.pop(context);
+                  }, child: Text("Enter", style: TextStyle(fontSize: 20),))
                 ],
               )
           )
           );
         },
-        tooltip: 'Increment',
         child: const Icon(Icons.add,size:40),
         backgroundColor: Colors.white,
         foregroundColor: Colors.red,
@@ -136,16 +137,76 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+  Widget imageShow(){
+    return Center(
+        child: Stack(
+          children: [
+            InkWell(
+              child: CircleAvatar(
+                radius: 80,
+                backgroundImage: AssetImage('assets/basic.jpg'),
+              ),
+              onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
+            )
+          ],
+        )
+    );
+  }
+  Widget bottomSheet(){
+    return Container(
+      height: 115,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: [
+          Text('Choose Photo', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton.icon(
+                  icon: Icon(Icons.camera, size: 50),
+                  onPressed: (){
+
+                  },
+                  label: Text('Camera', style: TextStyle(fontSize: 20))
+              ),
+              TextButton.icon(
+                  icon: Icon(Icons.photo_library, size: 50),
+                  onPressed: () {
+
+                  },
+                  label: Text('Gallery', style: TextStyle(fontSize: 20))
+              )
+            ],
+          )
+
+        ],
+      ),
+    );
+  }
 }
 
-class Gifticon extends StatelessWidget {
-  final String remainDate;
-  Gifticon({this.remainDate='0'});
+class Gifticon extends StatefulWidget {
+  String remainDate;
+  Gifticon({required this.remainDate, Key? key}) : super(key: key);
+  @override
+  State<Gifticon> createState() => _GifticonState();
+}
 
-
+class _GifticonState extends State<Gifticon> {
+  bool exist=true;
+  bool delete=false;
+  TextEditingController tecname=TextEditingController();
+  TextEditingController tecdate=TextEditingController();
+  String name='';
+  String date='';
   @override
   Widget build(BuildContext context) {
-
+    String remainDate=widget.remainDate;
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.all(3),
@@ -185,7 +246,7 @@ class Gifticon extends StatelessWidget {
                             Text("${remainDate}",style:TextStyle(color:Colors.red)),
                           ],
                         ),
-                        Text("name",style:TextStyle(color:Colors.white)),
+                        Text("${name}",style:TextStyle(color:Colors.white)),
                       ],
                     ),
                   ),
@@ -198,22 +259,77 @@ class Gifticon extends StatelessWidget {
       onTap: (){
         showDialog(context: context, builder: (context)=>AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)), title: Text("ShowImage"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('imgs/flutter_image.png', width: 60, height:120),
-              SizedBox(height:20),
-              Text("이름"),
-              SizedBox(height:20),
-              Text("유효기한"),
-              SizedBox(height:20),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children:[ElevatedButton(onPressed: (){}, child: Text("사용완료")),
-                SizedBox(width:10),
-                ElevatedButton(onPressed: (){}, child: Text("수정")), SizedBox(width: 10),
-                ElevatedButton(onPressed: (){
-
-                }, child: Text("삭제"),)],),
-            ],
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(radius: 100, backgroundImage: AssetImage("assets/basic.jpg")),
+                  SizedBox(height: 20),
+                  Text("이름"),
+                  SizedBox(height: 20),
+                  Text("${name}"),
+                  SizedBox(height: 20),
+                  Text("유효기한"),
+                  SizedBox(height: 20),
+                  Text("${date}"),
+                  Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [ElevatedButton(onPressed: () {
+                      exist = false;
+                      Navigator.pop(context);
+                    }, child: Text("사용완료")),
+                      SizedBox(width: 10),
+                      ElevatedButton(onPressed: () {
+                        showDialog(context: context, builder: (context) =>
+                            AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              title: Text("수정"),
+                              content: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text("이름"),
+                                      Expanded(child: TextField(
+                                        controller: tecname,))
+                                    ],
+                                  ),
+                                  SizedBox(height: 30),
+                                  Row(
+                                    children: [
+                                      Text("유효기한"),
+                                      Expanded(
+                                          child: TextField(controller: tecdate))
+                                    ],
+                                  ),
+                                  SizedBox(height: 50),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(onPressed: () {
+                                        setState(() {
+                                          name = tecname.text;
+                                          date = tecdate.text;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                          child: Text("Enter",
+                                            style: TextStyle(fontSize: 20),))
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),);
+                      }, child: Text("수정")), SizedBox(width: 10),
+                      ElevatedButton(onPressed: () {
+                        delete = true;
+                        Navigator.pop(context);
+                      }, child: Text("삭제"),),
+                    ],),
+                ],
+              );
+            }
           ),
         ),
         );
@@ -223,79 +339,9 @@ class Gifticon extends StatelessWidget {
 
 }
 
-class imageShow extends StatefulWidget {
-  const imageShow({Key? key}) : super(key: key);
 
-  @override
-  State<imageShow> createState() => _imageShowState();
-}
 
-class _imageShowState extends State<imageShow> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: Stack(
-          children: [
-            InkWell(
-              child: CircleAvatar(
-                radius: 80,
-                backgroundColor: Colors.white54,
-              ),
-              onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
-            )
-          ],
-        )
-    );
-  }
-}
 
-class bottomSheet extends StatefulWidget {
-  const bottomSheet({Key? key}) : super(key: key);
-
-  @override
-  State<bottomSheet> createState() => _bottomSheetState();
-}
-
-class _bottomSheetState extends State<bottomSheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 115,
-      width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20,
-      ),
-      child: Column(
-        children: [
-          Text('Choose Photo', style: TextStyle(fontSize: 20)),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton.icon(
-                  icon: Icon(Icons.camera, size: 50),
-                  onPressed: (){
-
-                  },
-                  label: Text('Camera', style: TextStyle(fontSize: 20))
-              ),
-              TextButton.icon(
-                  icon: Icon(Icons.photo_library, size: 50),
-                  onPressed: (){
-
-                  },
-                  label: Text('Gallery', style: TextStyle(fontSize: 20))
-              )
-            ],
-          )
-
-        ],
-      ),
-    );
-  }
-
-}
 
 
 
