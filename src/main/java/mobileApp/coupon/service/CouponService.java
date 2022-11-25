@@ -1,5 +1,8 @@
-package mobileApp.coupon;
+package mobileApp.coupon.service;
 
+import mobileApp.coupon.Coupon;
+import mobileApp.coupon.S3Uploader;
+import mobileApp.coupon.repository.CouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

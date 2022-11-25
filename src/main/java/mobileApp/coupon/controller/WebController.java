@@ -7,7 +7,9 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mobileApp.coupon.Coupon;
-import mobileApp.coupon.CouponService;
+import mobileApp.coupon.dto.FileName;
+import mobileApp.coupon.dto.Url;
+import mobileApp.coupon.service.CouponService;
 import mobileApp.coupon.S3Uploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.HttpMethod;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -25,15 +29,18 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class WebController {
-
     @Autowired
     AmazonS3Client amazonS3Client;
     private final S3Uploader s3Uploader;
 
     @Autowired
     private CouponService couponService;
+
+    //test용 원래 flutter에서 받아올 것
+    private FileName fileName = new FileName();
+    private String name;
 
 
     @Value("${cloud.aws.s3.bucket}")
@@ -54,9 +61,29 @@ public class WebController {
         return "hello";
     }
 
+    // test용 원래는 flutter에서 받아올 예정
+    @PostMapping("register/fileName")
+    public FileName registerFileName(){
+        fileName.setFileName("test.png");
+
+        return fileName;
+    }
+
+    @GetMapping("register/fileName")
+    public FileName getFileName( ){
+        return fileName;
+
+    }
+
+    @PostMapping("/post/preSignedUrl")
+    public Url postUrl(){
+        Url preUrl = new Url();
+        preUrl.setUrl(getPreSignedURL());
+        return preUrl;
+    }
+
 
     @PostMapping("/upload")
-    @ResponseBody
     public String upload(@RequestParam("data") MultipartFile multipartFile) throws IOException {
         return s3Uploader.upload(multipartFile, "test");
     }
@@ -70,12 +97,13 @@ public class WebController {
 
     private String getPreSignedURL() {
         String preSignedURL = "";
-        String fileName = UUID.randomUUID().toString();
+        //String fileName = UUID.randomUUID().toString();
+        //String fileName = UUID.randomUUID().toString();
         Coupon coupon = new Coupon();
 
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 20;
+        expTimeMillis += 1000 * 60 * 5;
         expiration.setTime(expTimeMillis);
 
         log.info(expiration.toString());
@@ -83,7 +111,7 @@ public class WebController {
         try {
 
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucket, fileName)
+                    new GeneratePresignedUrlRequest(bucket, this.fileName.getFileName())
                             .withMethod(HttpMethod.PUT)
                             .withExpiration(expiration);
             generatePresignedUrlRequest.addRequestParameter(
@@ -97,9 +125,9 @@ public class WebController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        coupon.setUser("testUser");
-        coupon.setImageUrl(preSignedURL);
-        couponService.saveCoupon(coupon);
+        //coupon.setUser("testUser");
+        //coupon.setImageUrl(preSignedURL);
+        //couponService.saveCoupon(coupon);
 
         return preSignedURL;
     }

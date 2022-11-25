@@ -3,6 +3,7 @@ package mobileApp.coupon;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -19,4 +20,20 @@ public class Coupon {
 
     @Column(length = 500)
     private String imageUrl;
+
+    @Column
+    private String brand;
+
+    @Column
+    private String couponName;
+
+    @Column
+    private Date date;
+
+    @Column
+    private String isUsed;
+
+    @Column
+    private int timer;
+
 }
