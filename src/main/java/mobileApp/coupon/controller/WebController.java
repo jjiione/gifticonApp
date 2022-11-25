@@ -94,6 +94,13 @@ public class WebController {
         return couponService.findByUser(user);
     }
 
+    @PostMapping("coupon/flutter/post") // test 용
+    public Coupon testCouponRegister(@RequestBody Coupon coupon){
+        couponService.saveCoupon(coupon);
+        return coupon;
+    }
+
+
 
     private String getPreSignedURL() {
         String preSignedURL = "";
