@@ -30,24 +30,12 @@ class MyApp extends StatelessWidget {
           '/gifticon':(context)=>GifticonPage(),
 
         },
-        //home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
 }
 
-Future<Post> fetchInfo() async{
-  var url='https://jsonplaceholder.typicode.com/posts';
-  final response=await http.get(Uri.parse(url));
-  if (response.statusCode==200){
-    print(json.decode(response.body));
-    Iterable list=json.decode(response.body);
-    list.map((model)=>Post.fromJson(model)).toList();
-    return Post.fromJson(json.decode(response.body));
-  }else{
-    throw Exception('실패');
-  }
-}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -59,47 +47,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _rowCount=3;
-  String _orderStd='전체';
-  List<String> orderStdArr=['전체','기간 임박순','기간 많은 순','이름','미사용','사용완료'];
+  List<String> orderStdArr=['전체','기간 임박순','기간 많은순','이름','미사용','사용완료'];
   var posts=<Post>[];
   bool changed=false;
   @override
   void initState(){
-    //_getPosts();
+    context.read<Updater>().setPosts();
     super.initState();
   }
-  _getPosts() {
-    CallApi().getPostData().then((response){
-      Iterable list=json.decode(response.body);
-      setState((){
-        posts=list.map((model)=>Post.fromJson(model)).toList();
-        print(posts);
-      });
-    });
-  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
-    if (_orderStd=='전체'){
+    var orderStd=context.watch<Updater>().order;
+    var posts=context.watch<Updater>().posts;
 
-    }else if (_orderStd=='기간 임박순'){
-
-    }else if (_orderStd=='기간 많은 순'){
-
-    }else if (_orderStd=='이름'){
-
-    }else if (_orderStd=='미사용'){
-
-    }else if (_orderStd=='사용완료'){
-
-    }
     return Consumer<Updater>(
       builder: (context,update,child){
-        print('updated');
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -116,18 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           Text("Order by: "),
                           DropdownButton(items: orderStdArr.map((i)=> DropdownMenuItem(value:i,child: Text(i))).toList(),
-                              hint:Text('$_orderStd'),
+                              hint:Text('$orderStd'),
                               onChanged: (value){
-                                setState(() {
-                                  _orderStd=value!;
-                                  if (_orderStd=='이름'){
-                                    _getPosts();
-                                  }else if (_orderStd=='미사용'){
-                                    _getPosts();
-                                  }else if (_orderStd=='전체'){
-                                    posts=[];
-                                  }
-                                });
+                            context.read<Updater>().changeOrder(value!);
+                            if (value=='이름'){
+                              context.read<Updater>().setPosts();
+                            }else if (value=='기간 임박순'){
+                              context.read<Updater>().initPosts();
+                            }
+
+
                               }),
                         ],
                       ),
@@ -246,25 +211,25 @@ class Gifticon extends StatelessWidget {
   }
 }
 
+// 쿠폰 등록 임시 페이지
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Updater updater=Provider.of<Updater>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text("Register Page"),
         ),
         body:Center(
           child:ElevatedButton(onPressed: (){
-            updater.update();
           },child:const Text("update"))
         )
     );
   }
 }
 
+// 쿠폰 상세 임시 페이지
 class GifticonPage extends StatelessWidget {
   const GifticonPage({Key? key}) : super(key: key);
   @override
