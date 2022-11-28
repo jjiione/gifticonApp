@@ -17,8 +17,11 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/coupon")
 public class CouponController {
-    @Autowired
     private CouponService couponService;
+    @Autowired
+    CouponController(CouponService couponService){
+        this.couponService = couponService;
+    }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Long registerCoupon(HttpServletRequest request, @RequestParam(value = "image")MultipartFile image, Coupon coupon) throws IOException{

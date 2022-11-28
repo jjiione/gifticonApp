@@ -57,30 +57,12 @@ public class WebController {
 
     @GetMapping("hello")
     public String hello(){
-        getPreSignedURL();
+        //getPreSignedURL();
         return "hello";
     }
 
     // test용 원래는 flutter에서 받아올 예정
-    @PostMapping("register/fileName")
-    public FileName registerFileName(){
-        fileName.setFileName("test.png");
 
-        return fileName;
-    }
-
-    @GetMapping("register/fileName")
-    public FileName getFileName( ){
-        return fileName;
-
-    }
-
-    @PostMapping("/post/preSignedUrl")
-    public Url postUrl(){
-        Url preUrl = new Url();
-        preUrl.setUrl(getPreSignedURL());
-        return preUrl;
-    }
 
 
     @PostMapping("/upload")
@@ -101,41 +83,4 @@ public class WebController {
     }
 
 
-
-    private String getPreSignedURL() {
-        String preSignedURL = "";
-        //String fileName = UUID.randomUUID().toString();
-        //String fileName = UUID.randomUUID().toString();
-        Coupon coupon = new Coupon();
-
-        Date expiration = new Date();
-        long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 5;
-        expiration.setTime(expTimeMillis);
-
-        log.info(expiration.toString());
-
-        try {
-
-            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucket, this.fileName.getFileName())
-                            .withMethod(HttpMethod.PUT)
-                            .withExpiration(expiration);
-            generatePresignedUrlRequest.addRequestParameter(
-                    Headers.S3_CANNED_ACL,
-                    CannedAccessControlList.PublicRead.toString());
-
-            URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-            preSignedURL = url.toString();
-            log.info("Pre-Signed URL : " + url.toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //coupon.setUser("testUser");
-        //coupon.setImageUrl(preSignedURL);
-        //couponService.saveCoupon(coupon);
-
-        return preSignedURL;
-    }
 }
