@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
     var orderStd=context.watch<Updater>().order;
-    var posts=context.watch<Updater>().posts;
+    var posts=context.watch<Updater>().gifticons;
 
     return Consumer<Updater>(
       builder: (context,update,child){
@@ -205,7 +205,7 @@ class Gifticon extends StatelessWidget {
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo("id", "name", "img", DateTime(2022,10,7),3 ));
+        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo(0,"user","brand","couponeName","url","date",0,"isUsed"));
       },
     );
   }
@@ -240,7 +240,7 @@ class GifticonPage extends StatelessWidget {
         title:Text("Gifticon Page"),
       ),
       body: Center(
-        child:Text(info.id)
+        child:Text(info.couponName)
       ),
     );
   }
