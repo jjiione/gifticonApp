@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +36,14 @@ class _MyHomePageState extends State<MyHomePage> {
   int _rowCount=3;
   String _orderStd='전체';
   List<String> orderStdArr=['전체','기간 임박순','기간 많은 순','이름','미사용','사용완료'];
+  String brand='';
+  String couponName='';
+  String date='';
+  int id=0;
+  String imageUrl='';
+  String isUsed='';
+  int timer=0;
+  String user='';
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +128,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   imageShow(),
                   SizedBox(height: 30),
-                  Text("chicken"),
+                  Text("$couponName"),
                   SizedBox(height: 30),
-                  Text("2022/11/07"),
+                  Text("$date"),
                   ElevatedButton(onPressed: (){
-
+                      Future<http.Response> registerCoupon(){
+                        return http.post(
+                          Uri.parse('http://54.180.193.160:8080/swagger-ui/index.html'),
+                          headers: <String, String>{
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            "Authorization": "Some token"
+                          },
+                          body: jsonEncode(<String, dynamic>{
+                              'brand' : '$brand',
+                              'couponName' : '$couponName',
+                              'date' : '$date',
+                              'id' : id,
+                              'imageUrl' : '$imageUrl',
+                              'isUsed' : '$isUsed',
+                              'timer' : timer,
+                              'user' : '$user'
+                          }),
+                        );
+                      }
                     Navigator.pop(context);
                   }, child: Text("Enter", style: TextStyle(fontSize: 20),))
                 ],
@@ -276,6 +305,7 @@ class _GifticonState extends State<Gifticon> {
                   Row(mainAxisAlignment: MainAxisAlignment.center,
                     children: [ElevatedButton(onPressed: () {
                       exist = false;
+
                       Navigator.pop(context);
                     }, child: Text("사용완료")),
                       SizedBox(width: 10),
