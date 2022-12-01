@@ -48,7 +48,10 @@ dependencies:
   google_ml_kit: ^0.13.0
   image_cropper: ^3.0.1
   provider: ^6.0.4
+<<<<<<< HEAD
   http: ^0.13.5
+=======
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
 >>>>>>> Stashed changes
 
 dev_dependencies:

@@ -13,12 +13,15 @@ class image_data with ChangeNotifier{
 
   String? ml_result;
   String? read_date;
+<<<<<<< HEAD
   String? read_name;
 
   String? temp_date;
   var split_list;
   var parsed_date;
 
+=======
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
   final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
 
   getImage(ImageSource imageSource) async {
@@ -50,6 +53,7 @@ class image_data with ChangeNotifier{
 
     final splitted = recognizedText.text.split('\n');
 
+<<<<<<< HEAD
     final year_regExp = RegExp(r"년");
     final month_regExp = RegExp(r"월");
     final day_regExp = RegExp(r"일");
@@ -73,11 +77,25 @@ class image_data with ChangeNotifier{
           }
         }
 
+=======
+    final date_regExp = RegExp(r"년");
+    for (int i = 0; i < splitted.length ; i++) {
+      if (date_regExp.hasMatch(splitted[i])){
+        print('=================True==============');
+        print(splitted[i]);
+        ml_result = 'Recognized date : \n\n ${splitted[i]}';
+        read_date = splitted[i];
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
       }
       else{
         continue;
       }
     }
+<<<<<<< HEAD
+=======
+    print('===');
+    print(splitted);
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
 
     notifyListeners();
   }

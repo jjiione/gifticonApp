@@ -11,8 +11,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'provider_class.dart';
+<<<<<<< HEAD
 import 'package:http/http.dart';
 
+=======
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
 
 // image crop을 사용하기 위해,
 // android >> app >> src >> main >> AndroidManifest의 맨 하단 부근에,
@@ -99,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? register_date;
 >>>>>>> Stashed changes
 
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -181,6 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
           showDialog(context: context, builder: (context)=>AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
               content:
+<<<<<<< HEAD
                 SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -262,6 +267,41 @@ class _MyHomePageState extends State<MyHomePage> {
                       }, child: Text("Enter", style: TextStyle(fontSize: 20),))
                     ],
                   ),
+=======
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                    child: Stack(
+                      children: [
+                        InkWell(
+                          child: CircleAvatar(
+                            radius: 80,
+                            //backgroundImage: AssetImage('assets/basic.jpg'),
+                            // backgroundImage: context.watch<image_data>().image == null
+                            //   ? AssetImage('assets/basic.jpg')
+                            //   : FileImage(File(context.watch<image_data>().image!.path)) as ImageProvider,
+                            child: context.watch<image_data>().image == null
+                                ? Image.asset('assets/basic.jpg')
+                                : Image.file(context.watch<image_data>().image!),
+                          ),
+                          onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
+                        )
+                      ],
+                    )
+                  ),
+                    SizedBox(height: 30),
+                    Text("chicken"),
+                    SizedBox(height: 30),
+                    context.watch<image_data>().read_date == null
+                        ? Text('유효기간 : null')
+                        : Text('유효기간 : ${context.watch<image_data>().read_date}'),
+                    ElevatedButton(onPressed: (){
+
+                      Navigator.pop(context);
+                    }, child: Text("Enter", style: TextStyle(fontSize: 20),))
+                  ],
+>>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
                 ),
           )
           );
