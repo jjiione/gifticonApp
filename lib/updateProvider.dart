@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 class Updater extends ChangeNotifier{
-  int user=0;
+  String userID='';
   String order='전체'; // 현 정렬 방식을 저장
   var gifticons=<GifticonInfo>[]; // main page에 나타낼 gifticons
 
@@ -16,6 +16,9 @@ class Updater extends ChangeNotifier{
   void initPosts(){
     gifticons=[];
     notifyListeners();
+  }
+  void setUser(String user){
+    userID=user;
   }
   // dropdownbutton 정렬 방식 변경 시, API로 데이터 GET 요청
   // URL 수정
@@ -54,9 +57,9 @@ class Updater extends ChangeNotifier{
     if (order=="전체"){
       return;
     }else if (order=='기간 임박순'){
-      gifticons.sort((a,b)=>a.id!.compareTo(b.id!));  // 기간 오름차순 (attribute는 임시값)
+      gifticons.sort((a,b)=>a.date!.compareTo(b.date!));  // 기간 오름차순 (attribute는 임시값)
     }else if (order=='기간 많은순'){
-      gifticons.sort((a,b)=>b.id!.compareTo(a.id!));
+      gifticons.sort((a,b)=>b.date!.compareTo(a.date!));
     }else if (order=='이름'){
       gifticons.sort((a,b)=>a.couponName!.compareTo(b.couponName!));
     }else if (order=='미사용'){

@@ -22,7 +22,7 @@ class GifticonInfo{
   // ID, 이름, 유효기간, 알림일
   String brand;
   String couponName;
-  String date;
+  DateTime date;
   int id;
   String imageUrl;
   String isUsed;

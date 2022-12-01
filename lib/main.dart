@@ -205,7 +205,7 @@ class Gifticon extends StatelessWidget {
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo(0,"user","brand","couponeName","url","date",0,"isUsed"));
+        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo(0,"user","brand","couponeName","url",DateTime(2022,12,01),0,"isUsed"));
       },
     );
   }
