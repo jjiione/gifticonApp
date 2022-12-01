@@ -1,6 +1,40 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:gifticonapp/gifticonInfo.dart';
+=======
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:provider/provider.dart';
+import 'provider_class.dart';
+
+// image crop을 사용하기 위해,
+// android >> app >> src >> main >> AndroidManifest의 맨 하단 부근에,
+
+/*
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        의 바로 밑에,
+       <activity
+           android:name="com.yalantis.ucrop.UCropActivity"
+           android:screenOrientation="portrait"
+           android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+           를 붙여넣을것.
+ */
+
+// google_ml_kit를 사용하기 위해,
+// android >> app >> src >> build.gradle에
+// defaultConfig의 minSdkVersion을 21로 변경하고,
+// 맨 하단의 dependencies에 다음 코드를 입력
+// implementation 'com.google.mlkit:text-recognition-korean:16.0.0-beta5'
+>>>>>>> Stashed changes
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +45,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => image_data(),
+      builder: (context, child) => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
+<<<<<<< Updated upstream
       initialRoute: '/',
       routes: {
         '/':(context)=>const MyHomePage(title: 'Gifticon App'),
@@ -24,6 +63,8 @@ class MyApp extends StatelessWidget {
 
       },
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
+=======
+>>>>>>> Stashed changes
     );
   }
 }
@@ -47,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +166,49 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
+<<<<<<< Updated upstream
           Navigator.pushNamed(context, '/register');
+=======
+          showDialog(context: context, builder: (context)=>AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
+              content:
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                    child: Stack(
+                      children: [
+                        InkWell(
+                          child: CircleAvatar(
+                            radius: 80,
+                            //backgroundImage: AssetImage('assets/basic.jpg'),
+                            // backgroundImage: context.watch<image_data>().image == null
+                            //   ? AssetImage('assets/basic.jpg')
+                            //   : FileImage(File(context.watch<image_data>().image!.path)) as ImageProvider,
+                            child: context.watch<image_data>().image == null
+                                ? Image.asset('assets/basic.jpg')
+                                : Image.file(context.watch<image_data>().image!),
+                          ),
+                          onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
+                        )
+                      ],
+                    )
+                  ),
+                    SizedBox(height: 30),
+                    Text("chicken"),
+                    SizedBox(height: 30),
+                    context.watch<image_data>().read_date == null
+                        ? Text('유효기간 : null')
+                        : Text('유효기간 : ${context.watch<image_data>().read_date}'),
+                    ElevatedButton(onPressed: (){
+
+                      Navigator.pop(context);
+                    }, child: Text("Enter", style: TextStyle(fontSize: 20),))
+                  ],
+                ),
+          )
+          );
+>>>>>>> Stashed changes
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add,size:40),
@@ -134,11 +218,151 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+<<<<<<< Updated upstream
 }
 
 class Gifticon extends StatelessWidget {
   final String remainDate;
   Gifticon({this.remainDate='0'});
+=======
+  Widget imageShow(){
+    return Center(
+        child: Stack(
+          children: [
+            InkWell(
+              child: CircleAvatar(
+                radius: 80,
+                //backgroundImage: AssetImage('assets/basic.jpg'),
+                backgroundImage: context.watch<image_data>().image == null
+                    ? AssetImage('assets/basic.jpg')
+                    : FileImage(File(context.watch<image_data>().image!.path)) as ImageProvider,
+              ),
+              onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
+            )
+          ],
+        )
+    );
+  }
+  Widget bottomSheet(){
+    return Container(
+      height: 115,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: [
+          Text('Choose Photo', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton.icon(
+                  icon: Icon(Icons.camera, size: 50),
+                  onPressed: () async {
+                    await context.read<image_data>().getImage(ImageSource.camera);
+                    context.read<image_data>().crop_image();
+
+                  },
+                  label: Text('Camera', style: TextStyle(fontSize: 20))
+              ),
+              TextButton.icon(
+                  icon: Icon(Icons.photo_library, size: 50),
+                  onPressed: () async {
+                    await context.read<image_data>().getImage(ImageSource.gallery);
+                    await context.read<image_data>().crop_image();
+                    await context.read<image_data>().textDetect();
+                    if (!mounted) return;
+
+                    String? barcode_id;
+                    String? expire_date;
+                    //한글이 있는지, 없는지?
+                    final regExp = RegExp('[가-힣]+');
+                    String temp_text = '한글글';
+
+                    if (regExp.hasMatch(temp_text)){
+                      //한글인경우
+                      //숫자로 parsing이 되는지 확인해서 숫자가 있으면
+                      //해당 element를 숫자로만 된걸로 대체.
+                    }
+
+
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(
+                    //         builder:
+                    //             (context)=>MlResultPage(ml_result: context.read<image_data>().ml_result,
+                    //               image: context.read<image_data>().image,)
+                    //     )
+                    // );
+
+                  },
+                  label: Text('Gallery', style: TextStyle(fontSize: 20))
+              ),
+            ],
+          )
+
+        ],
+      ),
+    );
+  }
+}
+
+class MlResultPage extends StatefulWidget {
+  MlResultPage({Key? key, this.image, this.ml_result}) : super(key: key);
+  File? image;
+  String? ml_result;
+
+  @override
+  State<MlResultPage> createState() => _MlResultPageState(ml_result:ml_result);
+}
+
+class _MlResultPageState extends State<MlResultPage> {
+  _MlResultPageState({this.image, this.ml_result});
+  File? image;
+  String? ml_result;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ml_Result Page'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            /*
+            Container(
+                constraints: const BoxConstraints(
+                  minHeight: 100,
+                  minWidth: 100,
+                  maxHeight: 200,
+                  maxWidth: 200,
+                ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Center(
+                    child: image == null
+                        ? Text('')
+                        : Image.file(File(image!.path)))
+            ),
+            */
+            Text(ml_result!),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Gifticon extends StatefulWidget {
+  String remainDate;
+  Gifticon({required this.remainDate, Key? key}) : super(key: key);
+  @override
+  State<Gifticon> createState() => _GifticonState();
+}
+>>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
