@@ -43,6 +43,7 @@ dependencies:
   google_ml_kit: ^0.13.0
   image_cropper: ^3.0.1
   provider: ^6.0.4
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:

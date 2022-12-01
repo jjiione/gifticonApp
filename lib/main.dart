@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'provider_class.dart';
+import 'package:dio/dio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -140,26 +141,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   context.watch<image_data>().read_date == null
                       ? Text('유효기간 : null')
                       : Text('유효기간 : ${context.watch<image_data>().read_date}'),
-                  ElevatedButton(onPressed: (){
-                    Future<http.Response> registerCoupon(){
-                      return http.post(
-                        Uri.parse('http://54.180.193.160:8080/app/coupon/register'),
-                        headers: <String, String>{
-                          'Content-Type': 'application/json',
-                          'Accept': 'application/json',
-                          "Authorization": "Some token"
-                        },
-                        body: jsonEncode(<String, dynamic>{
-                          'brand' : '스타벅스',
-                          'couponName' : '아메리카노',
-                          'date' : '2022/12/01',
-                          'imageUrl' : '$imageUrl',
-                          'isUsed' : '사용완료',
-                          'timer' : 1,
-                          'user' : 'testuser'
-                        }),
-                      );
-                      }
+                  ElevatedButton(onPressed: () async {
+
+                    var dio=Dio();
+                    final response=await dio.post('http://54.180.193.160:8080/app/coupon/register', data: {
+                      "brand": "string",
+                      "couponName": "string",
+                      "date": "string",
+                      "imageUrl": "string",
+                      "isUsed": "string",
+                      "timer": 0,
+                      "user": "testtest"
+                    });
                     Navigator.pop(context);
                   }, child: Text("Enter", style: TextStyle(fontSize: 20),))
                 ],
