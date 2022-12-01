@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'provider_class.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,15 +45,38 @@ class _MyHomePageState extends State<MyHomePage> {
   int _rowCount=3;
   String _orderStd='전체';
   List<String> orderStdArr=['전체','기간 임박순','기간 많은 순','이름','미사용','사용완료'];
-  String brand='';
-  String couponName='';
-  String date='';
-  int id=0;
   String imageUrl='';
   String isUsed='';
   int timer=0;
   String user='';
+  final name_controller = TextEditingController();
+  final brand_controller = TextEditingController();
+  String? register_name;
+  String? register_brand;
+  String? register_date;
+  final List<PlatformFile> _files = [];
 
+  // 파일 업로드 함수
+  void _pickFiles() async {
+    List<PlatformFile>? uploadedFiles = (await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+    ))?.files;
+    setState(() {
+      for (PlatformFile file in uploadedFiles!) {
+        _files.add(file);
+      }
+    });
+    print(_files);
+  }
+
+  Future<int> _uploadToSignedURL(
+      {required PlatformFile file, required String url}) async {
+    print(file);
+    http.Response response = await http.put(Uri.parse(url), body: file.bytes);
+
+    return response.statusCode;
+
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -127,39 +151,128 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          showDialog(context: context, builder: (context)=>AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
-              content:
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  imageShow(),
-                  SizedBox(height: 30),
-                  Text("$couponName"),
-                  SizedBox(height: 30),
-                  context.watch<image_data>().read_date == null
-                      ? Text('유효기간 : null')
-                      : Text('유효기간 : ${context.watch<image_data>().read_date}'),
-                  ElevatedButton(onPressed: () async {
+        onPressed: () {
+          showDialog(context: context, builder: (context) =>
+              AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                title: Text("RegisterImage"),
+                content:
+                SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Stack(
+                          children: [
+                            InkWell(
+                              child: CircleAvatar(radius: 80,
+                                child: context
+                                    .watch<image_data>()
+                                    .image == null ? Image.asset(
+                                    'assets/basic.jpg') : Image.file(context
+                                    .watch<image_data>()
+                                    .image!),),
+                              onTap: () {
+                                showModalBottomSheet(context: context,
+                                    builder: ((builder) => bottomSheet()));
+                              },
+                            ),
+                            SizedBox(height: 15),
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: '쿠폰이름',
+                                border: UnderlineInputBorder(),
+                              ),
+                              controller: name_controller,
+                              onChanged: (value) {
+                                //register_name = value;
+                                register_name = name_controller.text;
+                                print('register_name is : ');
+                                print(register_name);
+                              },
+                            ),
+                            SizedBox(height: 15),
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: '브랜드이름',
+                                border: UnderlineInputBorder(),
+                              ),
+                              controller: brand_controller,
+                              onChanged: (value) {
+                                //register_name = value;
+                                register_brand = brand_controller.text;
+                                print('register_brand is : ');
+                                print(register_brand);
+                              },
+                            ),
+                            SizedBox(height: 15,),
 
-                    var dio=Dio();
-                    final response=await dio.post('http://54.180.193.160:8080/app/coupon/register', data: {
-                      "brand": "string",
-                      "couponName": "string",
-                      "date": "string",
-                      "imageUrl": "string",
-                      "isUsed": "string",
-                      "timer": 0,
-                      "user": "testtest"
-                    });
-                    Navigator.pop(context);
-                  }, child: Text("Enter", style: TextStyle(fontSize: 20),))
-                ],
+                            context
+                                .watch<image_data>()
+                                .read_date == null
+                                ? Text('유효기간 : null')
+                                : Text('유효기간 : ${context
+                                .watch<image_data>()
+                                .read_date}'),
+                            ElevatedButton(onPressed: () async {
+                              var dio = Dio();
+                              final response_post = await dio.post(
+                                  'http://54.180.193.160:8080/app/image/set/fileName',
+                                  data: {
+                                    "fileName": context
+                                        .read<image_data>()
+                                        .image!
+                                        .path
+                                        .toString()
+                                  });
+                              final response_get = await dio.get(
+                                  'http://54.180.193.160:8080/app/image/set/fileName');
+                              var image_setting = response_get.data.toString();
+
+                              final response_posturl = await dio.post(
+                                  'http://54.180.193.160:8080/app/image/post/preSignedUrl',
+                                  data: {
+                                    "url": image_setting
+                                  });
+                              imageUrl = response_posturl.data.toString();
+                              child:
+                              ElevatedButton(
+                                onPressed: () {
+                                  _uploadToSignedURL(
+                                      file: _files.elementAt(0),
+                                      url: imageUrl
+                                  );
+                                },
+                                child: const Text("Upload to S3"),
+                              );
+                              final response = await dio.post(
+                                  'http://54.180.193.160:8080/app/coupon/register',
+                                  data: {
+                                    "brand": "${register_brand}",
+                                    "couponName": "${register_name}",
+                                    "date": "${context
+                                        .watch<image_data>()
+                                        .read_date}",
+                                    "imageUrl": imageUrl,
+                                    "isUsed": "False",
+                                    "timer": 10,
+                                    "user": "testuser"
+                                  });
+                              Navigator.pop(context);
+                            },
+                                child: Text(
+                                  "Enter", style: TextStyle(fontSize: 20),))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               )
-          )
           );
         },
+
         child: const Icon(Icons.add,size:40),
         backgroundColor: Colors.white,
         foregroundColor: Colors.red,
@@ -167,20 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-  Widget imageShow(){
-    return Center(
-        child: Stack(
-          children: [
-            InkWell(
-              child: context.watch<image_data>().image == null
-                ? Image.asset('assets/basic.jpg')
-                : Image.file(context.watch<image_data>().image!),
-              onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
-            )
-          ],
-        )
-    );
-  }
+
   Widget bottomSheet(){
     return Container(
       height: 115,

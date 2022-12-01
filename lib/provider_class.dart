@@ -13,6 +13,12 @@ class image_data with ChangeNotifier{
 
   String? ml_result;
   String? read_date;
+  String? read_name;
+
+  String? temp_date;
+  var split_list;
+  var parsed_date;
+
   final textRecognizer = TextRecognizer(script: TextRecognitionScript.korean);
 
   getImage(ImageSource imageSource) async {
@@ -44,20 +50,34 @@ class image_data with ChangeNotifier{
 
     final splitted = recognizedText.text.split('\n');
 
-    final date_regExp = RegExp(r"년");
+    final year_regExp = RegExp(r"년");
+    final month_regExp = RegExp(r"월");
+    final day_regExp = RegExp(r"일");
     for (int i = 0; i < splitted.length ; i++) {
-      if (date_regExp.hasMatch(splitted[i])){
-        print('=================True==============');
-        print(splitted[i]);
-        ml_result = 'Recognized date : \n\n ${splitted[i]}';
-        read_date = splitted[i];
+      if (year_regExp.hasMatch(splitted[i])){
+        if (month_regExp.hasMatch(splitted[i])){
+          if (day_regExp.hasMatch(splitted[i])){
+            ml_result = 'Recognized date : \n\n ${splitted[i]}';
+            read_date = splitted[i];
+            temp_date = splitted[i].replaceAll(new RegExp(r'\s'), '');
+            temp_date = temp_date!.replaceAll(new RegExp(r'[^0-9]'), ' ');
+            split_list = temp_date!.split(' ');
+            parsed_date = DateTime(int.parse(split_list[0]),
+                int.parse(split_list[1]), int.parse(split_list[2]));
+            read_date = splitted[i];
+
+            // read_date = DateFormat('yyyy-MM-dd').format(DateTime.parse(temp_date!)).toString();
+            // print("read_date is : ");
+            // print('${read_date}');
+
+          }
+        }
+
       }
       else{
         continue;
       }
     }
-    print('===');
-    print(splitted);
 
     notifyListeners();
   }
