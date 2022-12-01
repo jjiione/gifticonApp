@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class GifticonAPI{
@@ -19,10 +21,9 @@ class GifticonAPI{
 }
 
 class GifticonInfo{
-  // ID, 이름, 유효기간, 알림일
   String brand;
   String couponName;
-  DateTime date;
+  String date;
   int id;
   String imageUrl;
   String isUsed;
@@ -37,7 +38,7 @@ class GifticonInfo{
       this.imageUrl,
       this.date,
       this.timer,
-      this.isUsed
+      this.isUsed,
       );
   factory GifticonInfo.fromJson(Map<String, dynamic> json){
     return GifticonInfo(

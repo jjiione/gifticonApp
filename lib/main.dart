@@ -26,9 +26,6 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/':(context)=>const MyHomePage(title: 'Gifticon App'),
-          '/register':(context)=>RegisterPage(),
-          '/gifticon':(context)=>GifticonPage(),
-
         },
       ),
     );
@@ -86,13 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               hint:Text('$orderStd'),
                               onChanged: (value){
                             context.read<Updater>().changeOrder(value!);
-                            if (value=='이름'){
-                              context.read<Updater>().setPosts();
-                            }else if (value=='기간 임박순'){
-                              context.read<Updater>().initPosts();
-                            }
-
-
+                            context.read<Updater>().setPosts();
                               }),
                         ],
                       ),
@@ -123,7 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         childAspectRatio: (itemWidth / itemHeight),
                         scrollDirection: Axis.vertical,
                         children: posts.map((post){
-                          return Gifticon(remainDate:'${post.id}');
+                          String remain_str='0';
+                          int remain=int.parse(DateTime.now().difference(DateTime.parse(post.date)).inDays.toString());
+                          if (remain>0){
+                            remain_str='+${remain}';
+                          }else {
+                            remain_str = '${remain}';
+                          }
+                          return Gifticon(id:post.id,name:post.couponName,url:"", remainDate:remain_str,date:post.date);
                         }).toList()
                     ),
                   ),
@@ -133,9 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: (){
-              Navigator.pushNamed(context, '/register');
+              // 쿠폰 등롱 페이지 이동
             },
-            tooltip: 'Increment',
+            tooltip: 'Register',
             child: const Icon(Icons.add,size:40),
             backgroundColor: Colors.white,
             foregroundColor: Colors.red,
@@ -148,8 +146,13 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Gifticon extends StatelessWidget {
+  final int? id;
   final String remainDate;
-  Gifticon({this.remainDate='0'});
+  final String? name;
+  final String? url;
+  final String? date;
+
+  Gifticon({this.id=1,this.name,this.url,this.remainDate='0',this.date=''});
 
   @override
   Widget build(BuildContext context) {
@@ -190,11 +193,11 @@ class Gifticon extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text("D-",style:TextStyle(color: Colors.white)),
+                            Text("D",style:TextStyle(color: Colors.white)),
                             Text("${remainDate}",style:TextStyle(color:Colors.red)),
                           ],
                         ),
-                        Text("name",style:TextStyle(color:Colors.white)),
+                        Text("${name}",style:TextStyle(color:Colors.white)),
                       ],
                     ),
                 ),
@@ -205,46 +208,13 @@ class Gifticon extends StatelessWidget {
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/gifticon',arguments: GifticonInfo(0,"user","brand","couponeName","url",DateTime(2022,12,01),0,"isUsed"));
+        // 쿠폰 상세 페이지 이동
       },
     );
   }
 }
 
-// 쿠폰 등록 임시 페이지
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Register Page"),
-        ),
-        body:Center(
-          child:ElevatedButton(onPressed: (){
-          },child:const Text("update"))
-        )
-    );
-  }
-}
-
-// 쿠폰 상세 임시 페이지
-class GifticonPage extends StatelessWidget {
-  const GifticonPage({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final info=ModalRoute.of(context)?.settings.arguments as GifticonInfo;
-    return Scaffold(
-      appBar: AppBar(
-        title:Text("Gifticon Page"),
-      ),
-      body: Center(
-        child:Text(info.couponName)
-      ),
-    );
-  }
-}
 
 
 

@@ -12,20 +12,17 @@ class Updater extends ChangeNotifier{
   String order='전체'; // 현 정렬 방식을 저장
   var gifticons=<GifticonInfo>[]; // main page에 나타낼 gifticons
 
-  // provider test func
-  void initPosts(){
-    gifticons=[];
-    notifyListeners();
-  }
   void setUser(String user){
     userID=user;
   }
+
   // dropdownbutton 정렬 방식 변경 시, API로 데이터 GET 요청
   // URL 수정
-  void setPosts(/*String user*/){
-    GifticonAPI().getData("https://jsonplaceholder.typicode.com/posts").then((response){
+  void setPosts(){
+    GifticonAPI().getData("http://54.180.193.160:8080/app/coupon/testuser").then((response){
       Iterable list=json.decode(response.body);
       gifticons=list.map((model)=>GifticonInfo.fromJson(model)).toList();
+      orderPosts();
       notifyListeners();
     });
   }
@@ -63,6 +60,9 @@ class Updater extends ChangeNotifier{
     }else if (order=='이름'){
       gifticons.sort((a,b)=>a.couponName!.compareTo(b.couponName!));
     }else if (order=='미사용'){
+      gifticons.forEach((item)=>{
+        print(item.isUsed)
+      });
       gifticons=gifticons.where((item) => item.isUsed=='미사용').toList();
     }else if (order=='사용완료'){
       gifticons=gifticons.where((item) => item.isUsed=='사용완료').toList();
