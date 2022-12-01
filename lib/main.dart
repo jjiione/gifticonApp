@@ -1,9 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:provider/provider.dart';
+import 'provider_class.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,12 +18,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => image_data(),
+      builder : (context, child) => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -124,33 +131,34 @@ class _MyHomePageState extends State<MyHomePage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
               content:
               Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   imageShow(),
                   SizedBox(height: 30),
                   Text("$couponName"),
                   SizedBox(height: 30),
-                  Text("$date"),
+                  context.watch<image_data>().read_date == null
+                      ? Text('유효기간 : null')
+                      : Text('유효기간 : ${context.watch<image_data>().read_date}'),
                   ElevatedButton(onPressed: (){
-                      Future<http.Response> registerCoupon(){
-                        return http.post(
-                          Uri.parse('http://54.180.193.160:8080/swagger-ui/index.html'),
-                          headers: <String, String>{
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            "Authorization": "Some token"
-                          },
-                          body: jsonEncode(<String, dynamic>{
-                              'brand' : '$brand',
-                              'couponName' : '$couponName',
-                              'date' : '$date',
-                              'id' : id,
-                              'imageUrl' : '$imageUrl',
-                              'isUsed' : '$isUsed',
-                              'timer' : timer,
-                              'user' : '$user'
-                          }),
-                        );
+                    Future<http.Response> registerCoupon(){
+                      return http.post(
+                        Uri.parse('http://54.180.193.160:8080/app/coupon/register'),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          "Authorization": "Some token"
+                        },
+                        body: jsonEncode(<String, dynamic>{
+                          'brand' : '스타벅스',
+                          'couponName' : '아메리카노',
+                          'date' : '2022/12/01',
+                          'imageUrl' : '$imageUrl',
+                          'isUsed' : '사용완료',
+                          'timer' : 1,
+                          'user' : 'testuser'
+                        }),
+                      );
                       }
                     Navigator.pop(context);
                   }, child: Text("Enter", style: TextStyle(fontSize: 20),))
@@ -171,10 +179,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             InkWell(
-              child: CircleAvatar(
-                radius: 80,
-                backgroundImage: AssetImage('assets/basic.jpg'),
-              ),
+              child: context.watch<image_data>().image == null
+                ? Image.asset('assets/basic.jpg')
+                : Image.file(context.watch<image_data>().image!),
               onTap: (){ showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));},
             )
           ],
@@ -198,14 +205,40 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               TextButton.icon(
                   icon: Icon(Icons.camera, size: 50),
-                  onPressed: (){
-
+                  onPressed: () async{
+                    await context.read<image_data>().getImage(ImageSource.camera);
+                    context.read<image_data>().crop_image();
                   },
                   label: Text('Camera', style: TextStyle(fontSize: 20))
               ),
               TextButton.icon(
                   icon: Icon(Icons.photo_library, size: 50),
-                  onPressed: () {
+                  onPressed: () async {
+                    await context.read<image_data>().getImage(ImageSource.gallery);
+                    await context.read<image_data>().crop_image();
+                    await context.read<image_data>().textDetect();
+                    if (!mounted) return;
+
+                    String? barcode_id;
+                    String? expire_date;
+                    //한글이 있는지, 없는지?
+                    final regExp = RegExp('[가-힣]+');
+                    String temp_text = '한글글';
+
+                    if (regExp.hasMatch(temp_text)){
+                      //한글인경우
+                      //숫자로 parsing이 되는지 확인해서 숫자가 있으면
+                      //해당 element를 숫자로만 된걸로 대체.
+                    }
+
+
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(
+                    //         builder:
+                    //             (context)=>MlResultPage(ml_result: context.read<image_data>().ml_result,
+                    //               image: context.read<image_data>().image,)
+                    //     )
+                    // );
 
                   },
                   label: Text('Gallery', style: TextStyle(fontSize: 20))
