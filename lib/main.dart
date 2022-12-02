@@ -147,12 +147,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Gifticon extends StatelessWidget {
   final int? id;
+  final String brand;
   final String remainDate;
   final String? name;
   final String? url;
   final String? date;
 
-  Gifticon({this.id=1,this.name,this.url,this.remainDate='0',this.date=''});
+  Gifticon({this.id=1,this.name,this.brand='',this.url,this.remainDate='0',this.date=''});
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +175,7 @@ class Gifticon extends StatelessWidget {
                   widthFactor: 0.8,
                   heightFactor: 1.2,
                   child: Container(
-                    child: Image.network('https://picsum.photos/250?image=9'),
+                    child: Image.network('https://images.unsplash.com/photo-1547721064-da6cfb341d50'),
                     margin: EdgeInsets.only(bottom:20),
                     decoration:BoxDecoration(
                       borderRadius: BorderRadius.circular(5),

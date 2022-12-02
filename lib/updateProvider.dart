@@ -63,9 +63,9 @@ class Updater extends ChangeNotifier{
       gifticons.forEach((item)=>{
         print(item.isUsed)
       });
-      gifticons=gifticons.where((item) => item.isUsed=='미사용').toList();
+      gifticons=gifticons.where((item) => item.isUsed=='False').toList();
     }else if (order=='사용완료'){
-      gifticons=gifticons.where((item) => item.isUsed=='사용완료').toList();
+      gifticons=gifticons.where((item) => item.isUsed=='True').toList();
     }
   }
 
