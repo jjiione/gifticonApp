@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -55,6 +56,11 @@ public class CouponService {
         couponRepository.deleteById(couponId);
 
         return "Complete Delete";
+    }
+
+    public String urlFindById(long couponId){
+        Optional<Coupon> coupon = couponRepository.findById(couponId);
+        return coupon.orElseGet(null).getImageUrl();
     }
 
 

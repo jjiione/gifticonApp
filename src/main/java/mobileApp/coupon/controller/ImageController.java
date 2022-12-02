@@ -62,11 +62,21 @@ public class ImageController {
 
     }
 
+
     @GetMapping("/get/preSignedUrl")   // 수정 됨
     @ApiOperation(value = "이미지 등록 url 생성")
     public Url postUrl(){
         Url preUrl = new Url();
         preUrl.setUrl(getPreSignedURL());
+        return preUrl;
+    }
+
+    @GetMapping("/get/preSignedUrl/imageDown/{couponId}")// 수정 됨
+    @ApiOperation(value = "이미지 등록 url 생성")
+    public Url postUrlForDownLoad(@PathVariable long couponId){
+        Url preUrl = new Url();
+        preUrl.setUrl(getPreSignedURLForDown(couponService.urlFindById(couponId)));
+
         return preUrl;
     }
 
@@ -90,6 +100,43 @@ public class ImageController {
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucket, this.fileName.getFileName())
                             .withMethod(HttpMethod.PUT)
+                            .withExpiration(expiration);
+            generatePresignedUrlRequest.addRequestParameter(
+                    Headers.S3_CANNED_ACL,
+                    CannedAccessControlList.PublicRead.toString());
+
+            URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
+            preSignedURL = url.toString();
+            log.info("Pre-Signed URL : " + url.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //coupon.setUser("testUser");
+        //coupon.setImageUrl(preSignedURL);
+        //couponService.saveCoupon(coupon);
+
+        return preSignedURL;
+    }
+
+    private String getPreSignedURLForDown(String fileName) {
+        String preSignedURL = "";
+        //String fileName = UUID.randomUUID().toString();
+        //String fileName = UUID.randomUUID().toString();
+        Coupon coupon = new Coupon();
+
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 5;
+        expiration.setTime(expTimeMillis);
+
+        log.info(expiration.toString());
+
+        try {
+
+            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                    new GeneratePresignedUrlRequest(bucket, fileName)
+                            .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
             generatePresignedUrlRequest.addRequestParameter(
                     Headers.S3_CANNED_ACL,
