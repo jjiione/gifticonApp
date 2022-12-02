@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "366587808720",
+    "project_id": "flutter-changyung",
+    "storage_bucket": "flutter-changyung.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366587808720:android:4092973c21d703972b47d5",
+        "android_client_info": {
+          "package_name": "com.example.flutter_temp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQd3QvJ4JuL0g8-XCUvI085aHKrMAfVco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "366587808720-akvbehd8kujidlnvlb5gbuc0spqsvmbv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gifticonapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366587808720:android:16973c04a7f760a12b47d5",
+        "android_client_info": {
+          "package_name": "com.example.gifticonapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQd3QvJ4JuL0g8-XCUvI085aHKrMAfVco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "366587808720-akvbehd8kujidlnvlb5gbuc0spqsvmbv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gifticonapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366587808720:android:d9f14c4133b63c812b47d5",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQd3QvJ4JuL0g8-XCUvI085aHKrMAfVco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366587808720-uo4591jgdilthlusb48hkcq53enan4pb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "366587808720-akvbehd8kujidlnvlb5gbuc0spqsvmbv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gifticonapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
