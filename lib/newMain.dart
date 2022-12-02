@@ -99,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<int> _uploadToSignedURL(
       {required Uint8List bytes, required String url}) async {
     http.Response response = await http.put(Uri.parse(url), body: bytes);
+    print("==========uploadtosignedurl=============");
     print(response.statusCode);
 
     return response.statusCode;
@@ -253,11 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 final response_post = await dio.post(
                                     'http://54.180.193.160:8080/app/image/set/fileName',
                                     data: {
-                                      "fileName": context
-                                          .read<image_data>()
-                                          .image!
-                                          .path
-                                          .toString()
+                                      "fileName": context.read<image_data>().image!.path.toString()
                                     });
                                 final response_get = await dio.get(
                                     'http://54.180.193.160:8080/app/image/set/fileName');
@@ -279,16 +276,37 @@ class _MyHomePageState extends State<MyHomePage> {
                                       "couponName": register_name,
                                       "date":
                                       "${context.read<image_data>().parsed_date}",
-                                      "imageUrl": imageUrl,
+                                      "imageUrl": context.read<image_data>().image!.path.toString(),
                                       "isUsed": "False",
                                       "timer": 10,
                                       "user": "testuser"
                                     });
 
-                                // _uploadToSignedURL(
-                                //     bytes: context.read<image_data>().image!.readAsBytesSync(),
-                                //     url: imageUrl
-                                // );
+                                _uploadToSignedURL(
+                                    bytes: context.read<image_data>().image!.readAsBytesSync(),
+                                    url: imageUrl
+                                );
+
+
+                                //새로 다운받아야되는데.
+                                //context.read<image_data>().image!.path.toString()
+                                //다운받을때 쓸 api 포맷.
+                                // final response_get_download = await dio.post(
+                                //     'http://54.180.193.160:8080/app/coupon/register',
+                                //     data: {
+                                //       "brand": register_brand,
+                                //       "couponName": register_name,
+                                //       "date":
+                                //       "${context.read<image_data>().parsed_date}",
+                                //       "imageUrl": context.read<image_data>().image!.path,
+                                //       "isUsed": "False",
+                                //       "timer": 10,
+                                //       "user": "testuser"
+                                //     });
+                                //======================================
+
+                                context.read<Updater>().setPosts();
+
 
                                 Navigator.pop(context);
                               },
@@ -377,10 +395,19 @@ class Gifticon extends StatefulWidget {
 
 class _GifticonState extends State<Gifticon> {
 
+  @override
+  void initState() {
+    tecname.text = widget.name!;
+    tecdate.text = widget.date!;
+  }
+
   bool exist=true;
   bool delete=false;
   TextEditingController tecname=TextEditingController();
   TextEditingController tecdate=TextEditingController();
+
+  String? temp_name;
+  String? temp_date;
   // String name='';
   // String date='';
 
@@ -455,11 +482,25 @@ class _GifticonState extends State<Gifticon> {
                     SizedBox(height: 20),
                     Text("${widget.date}"),
                     Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [ElevatedButton(onPressed: () {
-                        exist = false;
+                      children: [
+                        ElevatedButton(onPressed: () {
+                          exist = false;
+                          var dio = Dio();
+                          dio.put('http://54.180.193.160:8080/app/coupon/change/${widget.id}',
+                              data: {
+                                "brand": widget.brand,
+                                "couponName": widget.name,
+                                "date": widget.date,
+                                "imageUrl": widget.url,
+                                "isUsed": "True",
+                                "timer": 10,
+                                "user": "testuser"
+                              }
+                          );
+                          context.read<Updater>().setPosts();
 
-                        Navigator.pop(context);
-                      }, child: Text("사용완료")),
+                          Navigator.pop(context);
+                        }, child: Text("사용완료")),
                         SizedBox(width: 10),
                         ElevatedButton(onPressed: () {
                           showDialog(context: context, builder: (context) =>
@@ -503,9 +544,31 @@ class _GifticonState extends State<Gifticon> {
                                   ],
                                 ),
                               ),);
+
+
+                          //==============Point=================
+                          var dio = Dio();
+                          dio.put('http://54.180.193.160:8080/app/coupon/change/${widget.id}',
+                              data: {
+                                "brand": widget.brand,
+                                "couponName": temp_name,
+                                "date": temp_date,
+                                "imageUrl": widget.url,
+                                "isUsed": "True",
+                                "timer": 10,
+                                "user": "testuser"
+                              }
+                          );
+                          context.read<Updater>().setPosts();
+
                         }, child: Text("수정")), SizedBox(width: 10),
                         ElevatedButton(onPressed: () {
                           delete = true;
+
+                          var dio = Dio();
+                          dio.delete('http://54.180.193.160:8080/app/coupon/delete/${widget.id}',);
+                          context.read<Updater>().setPosts();
+
                           Navigator.pop(context);
                         }, child: Text("삭제"),),
                       ],),
