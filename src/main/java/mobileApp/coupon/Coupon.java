@@ -28,7 +28,7 @@ public class Coupon {
     private String couponName;
 
     @Column
-    private String date;
+    private Date date;
 
     @Column
     private String isUsed;

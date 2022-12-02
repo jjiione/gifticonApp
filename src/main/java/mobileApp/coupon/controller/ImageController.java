@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mobileApp.coupon.Coupon;
@@ -14,11 +15,9 @@ import mobileApp.coupon.dto.Url;
 import mobileApp.coupon.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Date;
 
@@ -35,7 +34,7 @@ public class ImageController {
     private CouponService couponService;
 
     //test용 원래 flutter에서 받아올 것
-    private FileName fileName = new FileName();
+    private FileName fileName = null;
     private String name;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -45,24 +44,33 @@ public class ImageController {
     private String objectKey;
 
     @PostMapping("set/fileName")
-    public FileName registerFileName(){
-        fileName.setFileName("test.png");
-
-        return fileName;
+    @ApiOperation(value = "파일 이름 등록")
+    public FileName registerFileName(@RequestBody FileName fileName){
+        this.fileName = fileName;
+        return this.fileName;
     }
 
     @GetMapping("set/fileName")
-    public FileName getFileName( ){
-        return fileName;
+    @ApiOperation(value = "이미지 파일 이름 세팅", notes = "이미지 파일 이름 등록한다")
+    public FileName getFileName(){
+        if (fileName == null){
+            FileName errorFileName = new FileName();
+            errorFileName.setFileName("file name is not setting ");
+            return errorFileName;
+        }
+        return this.fileName;
 
     }
 
-    @PostMapping("/post/preSignedUrl")
+    @GetMapping("/get/preSignedUrl")   // 수정 됨
+    @ApiOperation(value = "이미지 등록 url 생성")
     public Url postUrl(){
         Url preUrl = new Url();
         preUrl.setUrl(getPreSignedURL());
         return preUrl;
     }
+
+
 
     private String getPreSignedURL() {
         String preSignedURL = "";

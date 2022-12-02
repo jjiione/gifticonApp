@@ -44,4 +44,18 @@ public class CouponService {
     }
 
 
+    public Coupon couponUpdate(long couponId, Coupon coupon){
+        couponRepository.deleteById(couponId);
+        couponRepository.save(coupon);
+        return coupon;
+    }
+
+    public String deleteCoupon(long couponId){
+
+        couponRepository.deleteById(couponId);
+
+        return "Complete Delete";
+    }
+
+
 }
