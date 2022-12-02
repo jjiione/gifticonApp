@@ -41,6 +41,14 @@ import 'package:http/http.dart';
 // implementation 'com.google.mlkit:text-recognition-korean:16.0.0-beta5'
 >>>>>>> Stashed changes
 
+//==========================hayeeon=============
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:gifticonapp/gifticonInfo.dart';
+import 'package:gifticonapp/updateProvider.dart';
+import 'dart:async';
+import 'dart:convert';
+//==================================
+
 void main() {
   runApp(const MyApp());
 }
@@ -50,6 +58,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return ChangeNotifierProvider(
       create: (BuildContext context) => image_data(),
       builder: (context, child) => MaterialApp(
@@ -71,6 +80,35 @@ class MyApp extends StatelessWidget {
 =======
 >>>>>>> Stashed changes
     );
+=======
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+        create: (BuildContext context) => image_data(),),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => Updater(),),
+      ],
+        builder : (context, child) => MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.grey,
+          ),
+          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        ),
+      );
+
+
+    // return ChangeNotifierProvider(
+    //   create: (BuildContext context) => image_data(),
+    //   builder : (context, child) => MaterialApp(
+    //     title: 'Flutter Demo',
+    //     theme: ThemeData(
+    //       primarySwatch: Colors.grey,
+    //     ),
+    //     home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    //   ),
+    // );
+>>>>>>> Stashed changes
   }
 }
 
@@ -179,13 +217,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-<<<<<<< Updated upstream
-          Navigator.pushNamed(context, '/register');
-=======
           showDialog(context: context, builder: (context)=>AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)), title: Text("RegisterImage"),
               content:
-<<<<<<< HEAD
                 SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -214,6 +248,98 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration: InputDecoration(
                           hintText: '쿠폰이름',
                           border: UnderlineInputBorder(),
+=======
+                        child: Stack(
+                          children: [
+                            InkWell(
+                              child: CircleAvatar(radius: 80,
+                                child: context.watch<image_data>().image == null ? Image.asset('assets/basic.jpg') : Image.file(context.watch<image_data>().image!),),
+                              onTap: () {
+                                showModalBottomSheet(context: context,
+                                    builder: ((builder) => bottomSheet()));},
+                            ),
+                            ],
+                        )
+                      ),
+                            SizedBox(height: 15),
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: '쿠폰이름',
+                                border: UnderlineInputBorder(),
+                              ),
+                              controller: name_controller,
+                              onChanged: (value) {
+                                //register_name = value;
+                                register_name = name_controller.text;
+                                print('register_name is : ');
+                                print(register_name);
+                              },
+                            ),
+                            SizedBox(height: 15),
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: '브랜드이름',
+                                border: UnderlineInputBorder(),
+                              ),
+                              controller: brand_controller,
+                              onChanged: (value) {
+                                //register_name = value;
+                                register_brand = brand_controller.text;
+                                print('register_brand is : ');
+                                print(register_brand);
+                              },
+                            ),
+                            SizedBox(height: 15,),
+
+                            context
+                                .watch<image_data>()
+                                .read_date == null
+                                ? Text('유효기간 : null')
+                                : Text('유효기간 : ${context
+                                .watch<image_data>()
+                                .read_date}'),
+                            ElevatedButton(onPressed: () async {
+                              var dio = Dio();
+                              final response_post = await dio.post(
+                                  'http://54.180.193.160:8080/app/image/set/fileName',
+                                  data: {
+                                    "fileName": context
+                                        .read<image_data>()
+                                        .image!
+                                        .path
+                                        .toString()
+                                  });
+                              final response_get = await dio.get(
+                                  'http://54.180.193.160:8080/app/image/set/fileName');
+                              var image_setting = response_get.data.toString();
+
+                              final response_posturl = await dio.post(
+                                  'http://54.180.193.160:8080/app/image/post/preSignedUrl',
+                                  data: {
+                                    "url": image_setting
+                                  });
+                              imageUrl = response_posturl.data.toString();
+                              child:
+
+                              final response = await dio.post(
+                                  'http://54.180.193.160:8080/app/coupon/register',
+                                  data: {
+                                    "brand": "${register_brand}",
+                                    "couponName": "${register_name}",
+                                    "date": "${context
+                                        .watch<image_data>()
+                                        .read_date}",
+                                    "imageUrl": imageUrl,
+                                    "isUsed": "False",
+                                    "timer": 10,
+                                    "user": "testuser"
+                                  });
+                              Navigator.pop(context);
+                            },
+                                child: Text(
+                                  "Enter", style: TextStyle(fontSize: 20),))
+                          ],
+>>>>>>> Stashed changes
                         ),
                         controller: name_controller,
                         onChanged: (value) {
@@ -223,6 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           print(register_name);
                         },
                       ),
+<<<<<<< Updated upstream
                       SizedBox(height: 15),
                       TextField(
                         decoration: InputDecoration(
@@ -304,10 +431,16 @@ class _MyHomePageState extends State<MyHomePage> {
 >>>>>>> 83be7f6a310bd5d3ed38574dda5e7c6ef1f5291b
                 ),
           )
+=======
+                  ),
+>>>>>>> Stashed changes
           );
 >>>>>>> Stashed changes
         },
+<<<<<<< Updated upstream
         tooltip: 'Increment',
+=======
+>>>>>>> Stashed changes
         child: const Icon(Icons.add,size:40),
         backgroundColor: Colors.white,
         foregroundColor: Colors.red,
@@ -371,28 +504,6 @@ class Gifticon extends StatelessWidget {
                     await context.read<image_data>().crop_image();
                     await context.read<image_data>().textDetect();
                     if (!mounted) return;
-
-                    String? barcode_id;
-                    String? expire_date;
-                    //한글이 있는지, 없는지?
-                    final regExp = RegExp('[가-힣]+');
-                    String temp_text = '한글글';
-
-                    if (regExp.hasMatch(temp_text)){
-                      //한글인경우
-                      //숫자로 parsing이 되는지 확인해서 숫자가 있으면
-                      //해당 element를 숫자로만 된걸로 대체.
-                    }
-
-
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(
-                    //         builder:
-                    //             (context)=>MlResultPage(ml_result: context.read<image_data>().ml_result,
-                    //               image: context.read<image_data>().image,)
-                    //     )
-                    // );
-
                   },
                   label: Text('Gallery', style: TextStyle(fontSize: 20))
               ),
