@@ -72,13 +72,14 @@ public class ImageController {
     }
 
     @GetMapping("/get/preSignedUrl/imageDown/{couponId}")// 수정 됨
-    @ApiOperation(value = "이미지 등록 url 생성")
+      @ApiOperation(value = "이미지 등록 url 생성")
     public Url postUrlForDownLoad(@PathVariable long couponId){
         Url preUrl = new Url();
-        preUrl.setUrl(getPreSignedURLForDown(couponService.urlFindById(couponId)));
 
+        preUrl.setUrl(getPreSignedURLForDown(couponService.urlFindById(couponId)));
         return preUrl;
     }
+
 
 
 
@@ -119,7 +120,7 @@ public class ImageController {
         return preSignedURL;
     }
 
-    private String getPreSignedURLForDown(String fileName) {
+    private String getPreSignedURLForDown(String name) {
         String preSignedURL = "";
         //String fileName = UUID.randomUUID().toString();
         //String fileName = UUID.randomUUID().toString();
@@ -135,7 +136,7 @@ public class ImageController {
         try {
 
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucket, fileName)
+                    new GeneratePresignedUrlRequest(bucket,name)
                             .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
             generatePresignedUrlRequest.addRequestParameter(
