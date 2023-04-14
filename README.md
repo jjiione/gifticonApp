@@ -1,10 +1,10 @@
 
-# :airplane: CAUPON
+# :iphone: CAUPON
 모바일 쿠폰, 종이 쿠폰을 종합하여 관리할 수 있는 기프티폰 앱입니다.
 
 <br>
 
-# 주요 기능
+# :clipboard:주요 기능
 1. 회원가입/로그인 기능
 2. 쿠폰 등록(카메라/갤러리 사진 선택 가능)
 3. 쿠폰 수정/삭제
@@ -13,7 +13,7 @@
 
 <br>
 
-# 상세 설명
+# :page_with_curl: 상세 설명
 
 ### 1. 회원가입/로그인 기능  
 
@@ -79,3 +79,11 @@
 <br>
 <img src = "./img/custom.PNG" width="600" height="600">  
 <br> 
+
+# :computer: 기술 스택
+ > 프론트 : flutter
+ 
+ > 백엔드 : SpringBoot, mysql, AWS(S3, RDS, EC2), firebase(fire store, ML Kit)
+ 
+
+
