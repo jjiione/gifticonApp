@@ -1,16 +1,50 @@
-# gifticonapp
 
-A new Flutter project.
+# :airplane: CAUPON
+모바일 쿠폰, 종이 쿠폰을 종합하여 관리할 수 있는 기프티폰 앱입니다.
 
-## Getting Started
+<br>
 
-This project is a starting point for a Flutter application.
+# 주요 기능
+1. 회원가입/로그인 기능
+2. 쿠폰 등록(카메라/갤러리 사진 선택 가능)
+3. 쿠폰 수정/삭제
+4. 쿠폰 정렬
+5. 쿠폰 배치 커스텀화
 
-A few resources to get you started if this is your first Flutter project:
+<br>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# 상세 설명
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 회원가입/로그인 기능  
+
+- 앱 첫 화면인 로그인 화면이다.
+- 계정이 없을 경우 Register your email 텍스트 버튼을 클릭하여 계정을 새로 생성한다. 
+- 회원가입이 성공한 경우, 뒤로 가기 버튼을 눌러 로그인을 다시 수행한다.  
+
+<br>
+
+<img src = "./img/login.png" width="600" height="370">
+
+### 쿠폰 등록(카메라/갤러리)    
+
+<img src = "./img/register1.png" width="600" height="370">  
+<br>
+
+'+’ 버튼을 누를 시, 쿠폰을 등록할 수 있는 창이 뜨고, 창 내에 이미지를 누를 시 쿠폰을 등록할 수 있는 방법(카메라/갤러리)를 선택할 수 있는 부분이 나온다.
+
+<br>
+<img src = "./img/register2.png" width="600" height="370">  
+
+<br>
+
+등록한 쿠폰 이미지를 선택한 후, 바코드와 유효기간을 인식하도록 영역을 조절하는 화면이 나온다. 영역 설정을 완료하면, 버튼에 인식된 쿠폰 유효기간이 표시된다. 쿠폰 일자를 변경하고 싶을 시, 버튼을 누르면 날짜를 선택할 수 있는 DatePicker가 나온다.
+
+<br>
+<img src = "./img/register3.png" width="600" height="370">  
+<br>  
+
+그 외에 이름과 브랜드를 추가적으로 입력하고 Enter을 누르면 쿠폰이 등록된다.
+
+
+
+
