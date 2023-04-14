@@ -77,5 +77,5 @@
 - 2~4개까지 표현할 수 있으며 개수에 따라 기프티콘 크기가 바뀝니다.
 
 <br>
-<img src = "./img/custom.PNG" width="300" height="600">  
+<img src = "./img/custom.PNG" width="600" height="600">  
 <br> 
